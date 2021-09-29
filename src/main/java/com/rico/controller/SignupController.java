@@ -78,7 +78,7 @@ public class SignupController {
 	}
 	
 	
-	//NOT TESTED**********************************8
+	//NOT TESTED**********************************
 	@PutMapping("/update/{id}")
 	public ResponseEntity<Signup> updateAccount(@RequestBody Signup signup, @PathVariable(name="id") int acc_id){
 		return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
