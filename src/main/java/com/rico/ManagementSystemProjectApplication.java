@@ -1,4 +1,4 @@
-package com.rico.ManagementSystemProject;
+package com.rico;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
