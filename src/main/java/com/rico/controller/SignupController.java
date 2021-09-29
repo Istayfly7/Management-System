@@ -3,6 +3,7 @@ package com.rico.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ public class SignupController {
 			if(userName == null)
 				signupRepository.findAll().forEach(signupList::add);
 			else if(userName != null)
-				signupRepository.findByUserName(userName).forEach(signupList::add);
+				signupRepository.findByUserName(userName).forEach(signupList::add); //NOT TESTED***********
 			
 			return new ResponseEntity<>(signupList, HttpStatus.OK);
 		}
@@ -78,10 +79,28 @@ public class SignupController {
 	}
 	
 	
-	//NOT TESTED**********************************
 	@PutMapping("/update/{id}")
-	public ResponseEntity<Signup> updateAccount(@RequestBody Signup signup, @PathVariable(name="id") int acc_id){
-		return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+	public ResponseEntity<Signup> updateAccount(@RequestBody Signup signup, @PathVariable("id") int id){
+		try {
+			Optional<Signup> signupData = signupRepository.findById(id);
+			
+			if(signupData.isPresent()) {
+				Signup _signup = signupData.get();
+				
+				_signup.setUserName(signup.getUserName());
+				_signup.setEmail(signup.getEmail());
+				_signup.setPassword(signup.getPassword());
+				
+				Signup s = signupRepository.save(_signup);
+				
+				return new ResponseEntity<>(s, HttpStatus.OK);
+			}
+			else
+				return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 }
