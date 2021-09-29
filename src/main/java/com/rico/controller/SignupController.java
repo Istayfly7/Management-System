@@ -28,15 +28,15 @@ public class SignupController {
 	
 	
 	@GetMapping("/")
-	public ResponseEntity<List<Signup>> getAllAccounts(@RequestParam(required=false) String accName){
+	public ResponseEntity<List<Signup>> getAllAccounts(@RequestParam(required=false) String userName){
 		try {
 			List<Signup> signupList = new ArrayList<>();
 			
-			if(accName == null)
+			if(userName == null)
 				signupRepository.findAll().forEach(signupList::add);
-			else if(accName != null)
-				signupRepository.findByAccName(accName).forEach(signupList::add);
-				
+			else if(userName != null)
+				signupRepository.findByUserName(userName).forEach(signupList::add);
+			
 			return new ResponseEntity<>(signupList, HttpStatus.OK);
 		}
 		catch(Exception ex) {

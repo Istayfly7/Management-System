@@ -8,6 +8,6 @@ import com.rico.entity.Signup;
 
 public interface SignupRepository extends JpaRepository<Signup, Integer>{
 
-	ArrayList<Signup> findByAccName(String accName);
+	ArrayList<Signup> findByUserName(String userName);
 
 }
