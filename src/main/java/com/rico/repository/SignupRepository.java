@@ -1,5 +1,13 @@
 package com.rico.repository;
 
-public interface SignupRepository {
+import java.util.ArrayList;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.rico.entity.Signup;
+
+public interface SignupRepository extends JpaRepository<Signup, Integer>{
+
+	ArrayList<Signup> findByAccName(String accName);
 
 }
