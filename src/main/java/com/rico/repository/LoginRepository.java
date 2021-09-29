@@ -1,5 +1,5 @@
 package com.rico.repository;
 
-public class LoginRepository {
+public interface LoginRepository {
 
 }
