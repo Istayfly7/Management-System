@@ -1,5 +1,7 @@
 package com.rico.entity;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -7,24 +9,37 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="Accounts")
-public class Signup {
+@Table(name="Users")
+public abstract class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String userName;
-	private String email;
 	private String password;
+	private boolean admin;
+	//private List<Copy> books;
 	
-	public Signup() {}
 	
-	public Signup(String userName, String email, String password) {
+//Default Constructor
+	public User() {}
+	
+//Constructor
+	public User(String userName, String password) {
 		this.userName = userName;
-		this.email = email;
 		this.password = password;
 	}
+	
 
+//Additonal Methods
+	//public List<Title> viewCatalog();
+	//public boolean checkOut(Copy book) {return false;}
+	//public boolean checkIn(Copy book) {return false;}
+	//public boolean putOnHold(Copy book) {return false;}
+	
+
+	
+//Getters and Setters
 	public int getId() {
 		return id;
 	}
@@ -41,14 +56,6 @@ public class Signup {
 		this.userName = userName;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public String getPassword() {
 		return password;
 	}
@@ -57,9 +64,9 @@ public class Signup {
 		this.password = password;
 	}
 
-	@Override
-	public String toString() {
-		return "Signup [id=" + id + ", userName=" + userName + ", email=" + email + ", password=" + password + "]";
+	
+	public boolean isAdmin() {
+		return admin;
 	}
 	
 	
