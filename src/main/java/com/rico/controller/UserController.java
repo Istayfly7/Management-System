@@ -1,5 +1,8 @@
 package com.rico.controller;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rico.entity.AdminUser;
 import com.rico.entity.User;
+import com.rico.entity.VisitorUser;
 import com.rico.repository.UserRepository;
 
 @RestController
@@ -30,26 +35,35 @@ public class UserController {
 		}
 	}
 	
-	/*@PostMapping("/save-default")
+	@PostMapping("/save-default")
 	public ResponseEntity<List<User>> createDefaultAccounts(){
 		try {
-			//Creating 3 Visitors for testing
-			User acc1 = new Visitor("flyHigher17", "word");
-			User acc2 = new Visitor("superhotfire", "1234");
-			User acc3 = new Visitor("toosmooth", "password1234");
+			//Creating 1 Admin for testing
+			User acc1 = new AdminUser();
+			acc1.setUserName("flyHigher17");
+			acc1.setPassword("word");
+			
+			//Creating 2 Visitors for testing
+			User acc2 = new VisitorUser();
+			acc2.setUserName("superhotfire");
+			acc2.setPassword("1234");
+			
+			User acc3 = new VisitorUser();
+			acc3.setUserName("toosmooth");
+			acc3.setPassword("password1234");
 			
 			
-			List<User> accountsList = Arrays.asList(acc1, acc2, acc3);
-			for(User account:accountsList)
-				userRepository.save(account);
+			List<User> usersList = Arrays.asList(acc1, acc2, acc3);
+			for(User users:usersList)
+				userRepository.save(users);
 			
-			return new ResponseEntity<>(accountsList, HttpStatus.OK);
+			return new ResponseEntity<>(usersList, HttpStatus.OK);
 			
 		}
 		catch(Exception ex) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}*/
+	}
 	
 	//NEEDS TO BE FIXED**************
 	/*@GetMapping("/account")
