@@ -38,12 +38,12 @@ public class UserController {
 	@PostMapping("/save-default")
 	public ResponseEntity<List<User>> createDefaultAccounts(){
 		try {
-			//Creating 1 Admin for testing
+			//Create a Admin by default
 			User acc1 = new AdminUser();
 			acc1.setUserName("flyHigher17");
 			acc1.setPassword("word");
 			
-			//Creating 2 Visitors for testing
+			//Create 2 Visitors by default
 			User acc2 = new VisitorUser();
 			acc2.setUserName("superhotfire");
 			acc2.setPassword("1234");
@@ -64,23 +64,5 @@ public class UserController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	//NEEDS TO BE FIXED**************
-	/*@GetMapping("/account")
-	public ResponseEntity<List<User>> getMyAccount(@RequestParam(required=true) String userName){
-		try {
-			List<User> userList = new ArrayList<>();
-			
-			if(userName == null)
-				userRepository.findAll().forEach(userList::add);
-			else if(userName != null)
-				userRepository.findByUserName(userName).forEach(userList::add); //NOT TESTED***********
-			
-			return new ResponseEntity<>(userList, HttpStatus.OK);
-		}
-		catch(Exception ex) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}*/
 	
 }
