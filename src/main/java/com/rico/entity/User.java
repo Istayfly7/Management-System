@@ -1,15 +1,28 @@
 package com.rico.entity;
 
-import java.util.List;
-
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.rico.enumType.UserType;
 
 @Entity
 @Table(name="Users")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({@JsonSubTypes.Type(value = VisitorUser.class, name = "VISITOR"),
+        @JsonSubTypes.Type(value = AdminUser.class, name = "ADMIN")
+})
 public abstract class User {
 
 	@Id
@@ -17,18 +30,12 @@ public abstract class User {
 	private int id;
 	private String userName;
 	private String password;
-	private boolean admin;
+	
+	@Column(insertable=false, updatable=false)
+	private UserType type;
 	//private List<Copy> books;
 	
-	
-//Default Constructor
-	public User() {}
-	
-//Constructor
-	public User(String userName, String password) {
-		this.userName = userName;
-		this.password = password;
-	}
+	public abstract UserType getType();
 	
 
 //Additonal Methods
@@ -63,12 +70,10 @@ public abstract class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
 	
-	public boolean isAdmin() {
-		return admin;
+	void update(User user) {
+		this.userName = user.userName;
+		this.password = user.password;
 	}
-	
-	
 	
 }
