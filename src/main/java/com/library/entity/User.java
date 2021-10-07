@@ -1,4 +1,4 @@
-package com.rico.entity;
+package com.library.entity;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -13,7 +13,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.rico.enumType.UserType;
+import com.library.enumType.UserType;
 
 @Entity
 @Table(name="Users")

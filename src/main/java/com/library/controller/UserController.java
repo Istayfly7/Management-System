@@ -1,4 +1,4 @@
-package com.rico.controller;
+package com.library.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.rico.entity.AdminUser;
-import com.rico.entity.User;
-import com.rico.entity.VisitorUser;
-import com.rico.repository.UserRepository;
+import com.library.entity.AdminUser;
+import com.library.entity.User;
+import com.library.entity.VisitorUser;
+import com.library.repository.UserRepository;
 
 @RestController
 @RequestMapping("users")

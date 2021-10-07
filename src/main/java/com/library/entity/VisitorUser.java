@@ -1,10 +1,10 @@
-package com.rico.entity;
+package com.library.entity;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.rico.enumType.UserType;
+import com.library.enumType.UserType;
 
 @Entity
 @DiscriminatorValue("VISITOR")
