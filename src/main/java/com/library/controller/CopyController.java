@@ -1,4 +1,4 @@
-package com.rico.controller;
+package com.library.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.rico.entity.Copy;
-import com.rico.repository.CopyRepository;
+import com.library.entity.Copy;
+import com.library.repository.CopyRepository;
 
 @RestController
 @RequestMapping("copies")
