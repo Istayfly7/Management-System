@@ -1,4 +1,4 @@
-package com.rico.enumType;
+package com.library.enumType;
 
 public enum UserType {
 	VISITOR,

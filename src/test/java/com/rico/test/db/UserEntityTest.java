@@ -11,8 +11,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.rico.entity.*;
-import com.rico.enumType.UserType;
+import com.library.entity.*;
+import com.library.enumType.UserType;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
