@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,6 +14,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -33,7 +35,11 @@ public class Copy
 	private Title title;
 	private boolean inStock;
 	private boolean onHold;
+	@ElementCollection(targetClass=String.class)
+	@MapKeyColumn(name="checked_out_by")
 	private Map<Integer, String> whoCheckedOut;
+	@ElementCollection(targetClass=String.class)
+	@MapKeyColumn(name="holding")
 	private Map<Integer, String> holder;
 	private Date returnDate;
 	@ManyToOne
