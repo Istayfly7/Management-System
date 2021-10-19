@@ -31,7 +31,7 @@ public class Copy
 	@ManyToOne
 	@JoinColumn(name="ISBN")
 	private Title title;
-	private boolean inStock;
+	private boolean inStock = true;
 	private boolean onHold;
 	private Map<Integer, String> whoCheckedOut;
 	private Map<Integer, String> holder;

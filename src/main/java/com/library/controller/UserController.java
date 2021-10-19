@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.library.entity.AdminUser;
+import com.library.entity.Title;
 import com.library.entity.User;
 import com.library.entity.VisitorUser;
+import com.library.repository.TitleRepository;
 import com.library.repository.UserRepository;
 
 @RestController
@@ -27,7 +29,10 @@ public class UserController {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	private TitleRepository titleRepository;
 	
+	//========================================================== Admin ONLY Controls =====================================================================
 	@GetMapping("/accounts")
 	public ResponseEntity<List<User>> getAllAccounts(@RequestParam(required=true) AdminUser account) {
 		try {
@@ -48,13 +53,29 @@ public class UserController {
 			
 			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 			
-			
 		}
 		catch(Exception ex) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
+	
+	//============================================================= Additional Controls =======================================================================
+	@GetMapping("/catalog")
+	public ResponseEntity<List<Title>> viewCatalog(){
+		try {
+			List<Title> catalog = titleRepository.findAll();
+			
+			if(!catalog.isEmpty()) {
+				return new ResponseEntity<>(catalog, HttpStatus.OK);
+			}
+				
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 	
 	@GetMapping("/myaccount")
 	public ResponseEntity<User> getMyAccount(@RequestParam(required=true) User account) {
@@ -67,8 +88,8 @@ public class UserController {
 				User u = accountData.get();
 				return new ResponseEntity<>(u, HttpStatus.OK);
 			}
-			else
-				return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+			
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 		}
 		catch(Exception ex) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -87,6 +108,7 @@ public class UserController {
 		}
 	}
 	
+//================================================================ For Testing Purposes ==========================================================================
 	@PostMapping("/save-default")
 	public ResponseEntity<List<User>> createDefaultAccounts(){
 		try {
