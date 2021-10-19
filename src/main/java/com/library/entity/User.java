@@ -1,5 +1,7 @@
 package com.library.entity;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -9,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -33,13 +36,15 @@ public abstract class User {
 	
 	@Column(insertable=false, updatable=false)
 	private UserType type;
-	//private List<Copy> books;
 	
+	@OneToMany(mappedBy="user")
+	private List<Copy> books;
+
+
 	public abstract UserType getType();
 	
-
+	
 //Additonal Methods
-	//public List<Title> viewCatalog();
 	//public boolean checkOut(Copy book) {return false;}
 	//public boolean checkIn(Copy book) {return false;}
 	//public boolean putOnHold(Copy book) {return false;}
@@ -69,6 +74,10 @@ public abstract class User {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public List<Copy> getBooks() {
+		return books;
 	}
 	
 	void update(User user) {

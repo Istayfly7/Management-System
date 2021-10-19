@@ -28,7 +28,7 @@ public class Title
 	private String title;
 	private String author;
 	private Date publicationDate;
-	@OneToMany(mappedBy="Titles", cascade=CascadeType.ALL)
+	@OneToMany(mappedBy="title", cascade=CascadeType.ALL)
 	private List<Copy> copies;
 	
 	public Title(int isbn, String title, String author, Date pubDate, List<Copy> copies)

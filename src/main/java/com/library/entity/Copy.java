@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -23,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 public class Copy
 {
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int copyId;
 	//changed int titleId to an entire Title for a many-to-one-relation
 	@ManyToOne
@@ -33,6 +36,9 @@ public class Copy
 	private Map<Integer, String> whoCheckedOut;
 	private Map<Integer, String> holder;
 	private Date returnDate;
+	@ManyToOne
+	@JoinColumn(name="id")
+	private User user;
 	
 	public Copy(int cid, Title t, boolean is, boolean oh, Map<Integer, String> wco, Map<Integer, String> holder, Date rd)
 	{
