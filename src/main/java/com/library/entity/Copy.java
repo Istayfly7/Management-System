@@ -1,11 +1,8 @@
 package com.library.entity;
 
 import java.sql.Date;
-import java.util.Map;
-
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,7 +11,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -35,76 +31,82 @@ public class Copy
 	private Title title;
 	private boolean inStock = true;
 	private boolean onHold;
-	@ElementCollection(targetClass=String.class)
-	@MapKeyColumn(name="checked_out_by")
-	private Map<Integer, String> whoCheckedOut;
-	@ElementCollection(targetClass=String.class)
-	@MapKeyColumn(name="holding")
-	private Map<Integer, String> holder;
+	private String holder;
 	private Date returnDate;
 	@ManyToOne
 	@JoinColumn(name="id")
 	private User user;
 	
-	public Copy(int cid, Title t, boolean is, boolean oh, Map<Integer, String> wco, Map<Integer, String> holder, Date rd)
+	public Copy(Title t)
 	{
-		this.setCopyId(cid);
 		this.setTitle(t);
-		this.setInStock(is);
-		this.setOnHold(oh);
-		this.setWhoCheckedOut(wco);
-		this.setHolder(holder);
-		this.setReturnDate(rd);
 	}
 	
 	public int getCopyId()
 	{
 		return this.copyId;
 	}
-	public void setCopyId(int id)
-	{
-		this.copyId = id;
-	}
+	
 	public Title getTitle() {
 		return title;
 	}
+	
 	public void setTitle(Title t) {
 		this.title = t;
 	}
-	/*
-	public int getTitleId() {
-		return titleId;
-	}
-	public void setTitleId(int titleId) {
-		this.titleId = titleId;
-	}*/
+	
 	public boolean isInStock() {
 		return inStock;
 	}
+	
 	public void setInStock(boolean inStock) {
 		this.inStock = inStock;
 	}
+	
 	public boolean isOnHold() {
 		return onHold;
 	}
+	
 	public void setOnHold(boolean onHold) {
 		this.onHold = onHold;
 	}
-	public Map<Integer, String> getWhoCheckedOut() {
-		return whoCheckedOut;
+	
+	public String getWhoCheckedOut() {
+		try {
+			if(user != null)
+				return user.getUserName();
+			else
+				throw new NullPointerException();
+		}
+		catch(NullPointerException ex) {
+			return "Copy: User is null.";
+		}
 	}
-	public void setWhoCheckedOut(Map<Integer, String> whoCheckedOut) {
-		this.whoCheckedOut = whoCheckedOut;
+	
+	public void setWhoCheckedOut(User whoCheckedOut) {
+		user = whoCheckedOut;
 	}
-	public Map<Integer, String> getHolder() {
-		return holder;
+	
+	public String getHolder() {
+		try {
+			if(holder != null)
+				return holder;
+			else
+				throw new NullPointerException();
+		}
+		catch(NullPointerException ex) {
+			return "Copy: Holder is null.";
+		}
 	}
-	public void setHolder(Map<Integer, String> holder) {
+	
+	public void setHolder(String holder) {
 		this.holder = holder;
 	}
+	
 	public Date getReturnDate() {
 		return returnDate;
 	}
+	
 	public void setReturnDate(Date returnDate) {
 		this.returnDate = returnDate;
 	}

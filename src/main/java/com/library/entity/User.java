@@ -40,16 +40,43 @@ public abstract class User {
 	@OneToMany(mappedBy="user")
 	private List<Copy> books;
 
-
 	public abstract UserType getType();
 	
 	
 //Additonal Methods
-	//public boolean checkOut(Copy book) {return false;}
-	//public boolean checkIn(Copy book) {return false;}
-	//public boolean putOnHold(Copy book) {return false;}
+	public boolean checkOut(Copy book) {
+		if(!book.isOnHold() && book.isInStock()) {
+			books.add(book);
+			book.setInStock(false);
+			book.setWhoCheckedOut(this);
+			return true;
+		}
+		else if(book.isOnHold() && book.getHolder() == this.getUserName() && book.isInStock()) {
+			books.add(book);
+			book.setInStock(false);
+			book.setWhoCheckedOut(this);
+			book.setOnHold(false);
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 	
-
+	public boolean checkIn(Copy book) {
+		return books.remove(book);	
+	}
+	
+	public boolean putOnHold(Copy book) {
+		if(!book.isOnHold() && !book.isInStock()) {
+			book.setOnHold(true);
+			book.setHolder(this.getUserName());
+			return true;
+		}
+		else
+			return false;
+	}
+	
 	
 //Getters and Setters
 	public int getId() {
