@@ -1,6 +1,7 @@
 package com.library.entity;
 
 import java.sql.Date;
+
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
@@ -11,7 +12,10 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.springframework.data.util.Pair;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -27,14 +31,18 @@ public class Copy
 	private int copyId;
 	//changed int titleId to an entire Title for a many-to-one-relation
 	@ManyToOne
-	@JoinColumn(name="ISBN")
+	@JoinColumn(name="isbn", nullable=false)
 	private Title title;
 	private boolean inStock = true;
 	private boolean onHold;
-	private String holder;
 	private Date returnDate;
+	
+	@OneToOne
+	@JoinColumn(name="holder")
+	private User holder;
+	
 	@ManyToOne
-	@JoinColumn(name="id")
+	@JoinColumn(name="user")
 	private User user;
 	
 	public Copy(Title t)
@@ -87,19 +95,19 @@ public class Copy
 		user = whoCheckedOut;
 	}
 	
-	public String getHolder() {
+	public Pair<Integer, String> getHolder() {
 		try {
 			if(holder != null)
-				return holder;
+				return Pair.of(holder.getId(), holder.getUserName());
 			else
 				throw new NullPointerException();
 		}
 		catch(NullPointerException ex) {
-			return "Copy: Holder is null.";
+			return Pair.of(0, null);
 		}
 	}
 	
-	public void setHolder(String holder) {
+	public void setHolder(User holder) {
 		this.holder = holder;
 	}
 	

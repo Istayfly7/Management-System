@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -31,8 +32,15 @@ public abstract class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	
+	@Column(nullable=false)
 	private String userName;
+	
+	@Column(nullable=false)
 	private String password;
+	
+	@OneToOne(mappedBy="holder")
+	private Copy bookOnHold;
 	
 	@Column(insertable=false, updatable=false)
 	private UserType type;
@@ -51,7 +59,9 @@ public abstract class User {
 			book.setWhoCheckedOut(this);
 			return true;
 		}
-		else if(book.isOnHold() && book.getHolder() == this.getUserName() && book.isInStock()) {
+		else if(book.isOnHold() && 
+				(book.getHolder().getFirst() == this.getId() && book.getHolder().getSecond() == this.getUserName())
+				&& book.isInStock()) {
 			books.add(book);
 			book.setInStock(false);
 			book.setWhoCheckedOut(this);
@@ -64,13 +74,18 @@ public abstract class User {
 	}
 	
 	public boolean checkIn(Copy book) {
-		return books.remove(book);	
+		if(books.remove(book)) {
+			book.setInStock(true);
+			book.setWhoCheckedOut(null);
+			return true;
+		}
+		return false;	
 	}
 	
 	public boolean putOnHold(Copy book) {
 		if(!book.isOnHold() && !book.isInStock()) {
 			book.setOnHold(true);
-			book.setHolder(this.getUserName());
+			book.setHolder(this);
 			return true;
 		}
 		else
@@ -106,6 +121,10 @@ public abstract class User {
 	public List<Copy> getBooks() {
 		return books;
 	}
+	
+	public Copy getBookOnHold() {
+		return bookOnHold;
+	} 
 	
 	void update(User user) {
 		this.userName = user.userName;
