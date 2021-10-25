@@ -2,14 +2,10 @@ package com.library.entity;
 
 import java.sql.Date;
 
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -17,13 +13,8 @@ import javax.persistence.Table;
 
 import org.springframework.data.util.Pair;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 @Entity
 @Table(name="Copies")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 public class Copy
 {
 	@Id
@@ -31,7 +22,7 @@ public class Copy
 	private int copyId;
 	//changed int titleId to an entire Title for a many-to-one-relation
 	@ManyToOne
-	@JoinColumn(name="isbn", nullable=false)
+	@JoinColumn(name="title", nullable=false)
 	private Title title;
 	private boolean inStock = true;
 	private boolean onHold;
@@ -44,6 +35,8 @@ public class Copy
 	@ManyToOne
 	@JoinColumn(name="user")
 	private User user;
+	
+	public Copy() {}
 	
 	public Copy(Title t)
 	{
@@ -80,15 +73,11 @@ public class Copy
 	}
 	
 	public String getWhoCheckedOut() {
-		try {
-			if(user != null)
-				return user.getUserName();
-			else
-				throw new NullPointerException();
-		}
-		catch(NullPointerException ex) {
-			return "Copy: User is null.";
-		}
+		if(user != null)
+			return user.getUserName();
+		else
+			return "";
+		
 	}
 	
 	public void setWhoCheckedOut(User whoCheckedOut) {
@@ -96,15 +85,10 @@ public class Copy
 	}
 	
 	public Pair<Integer, String> getHolder() {
-		try {
-			if(holder != null)
-				return Pair.of(holder.getId(), holder.getUserName());
-			else
-				throw new NullPointerException();
-		}
-		catch(NullPointerException ex) {
-			return Pair.of(0, null);
-		}
+		if(holder != null)
+			return Pair.of(holder.getId(), holder.getUserName());
+		else
+			return Pair.of(0, "");
 	}
 	
 	public void setHolder(User holder) {

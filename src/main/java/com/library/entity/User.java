@@ -66,6 +66,7 @@ public abstract class User {
 			book.setInStock(false);
 			book.setWhoCheckedOut(this);
 			book.setOnHold(false);
+			bookOnHold = null;
 			return true;
 		}
 		else {
@@ -86,6 +87,7 @@ public abstract class User {
 		if(!book.isOnHold() && !book.isInStock()) {
 			book.setOnHold(true);
 			book.setHolder(this);
+			bookOnHold = book;
 			return true;
 		}
 		else
