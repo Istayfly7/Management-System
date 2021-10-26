@@ -39,28 +39,56 @@ public class TitleController
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	
 	@DeleteMapping("/remove/{titleid}")
 	public void removeTitle(@RequestBody int titleid)
 	{
 		titleRepository.delete(titleRepository.getById(titleid));
 	}
+	
+	
 	@GetMapping("/show")
-	public List<Title> showAll()
+	public ResponseEntity<List<Title>> showAll()
 	{
-		return titleRepository.findAll();
-	}
-	@GetMapping("/show/{key}")
-	public List<Title> showByString(@PathVariable("key") String key)
-	{
-		//returns all titles containing {key}
-		List<Title> all = titleRepository.findAll();
-		List<Title> query = new ArrayList<>();
-		for(Title t: all)
-		{
-			//make title and key both lowercase to eliminate case-sensitivity
-			if(t.getTitle().toLowerCase().contains(key.toLowerCase()))
-				query.add(t);
+		try {
+			List<Title> catalog = new ArrayList<>();
+			titleRepository.findAll().forEach(catalog::add);
+			
+			if(!catalog.isEmpty()) {
+				return new ResponseEntity<>(catalog, HttpStatus.OK);
+			}
+				
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 		}
-		return query;
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	@GetMapping("/show/{key}")
+	public ResponseEntity<List<Title>> showByString(@PathVariable("key") String key)
+	{
+		try {
+			//returns all titles containing {key}
+			List<Title> all = titleRepository.findAll();
+			List<Title> query = new ArrayList<>();
+			for(Title t: all)
+			{
+				//make title and key both lowercase to eliminate case-sensitivity
+				if(t.getTitle().toLowerCase().contains(key.toLowerCase()))
+					query.add(t);
+			}
+			
+			if(!query.isEmpty()) {
+				return new ResponseEntity<>(query, HttpStatus.OK);
+			}
+				
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }

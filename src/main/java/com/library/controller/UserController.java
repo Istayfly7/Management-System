@@ -1,18 +1,13 @@
 package com.library.controller;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.library.entity.AdminUser;
@@ -27,8 +22,8 @@ public class UserController {
 	@Autowired
 	private UserRepository userRepository;
 	
-	
-	@GetMapping("/accounts")
+	//========================================================== Admin ONLY Controls =====================================================================
+	/*@GetMapping("/accounts")
 	public ResponseEntity<List<User>> getAllAccounts(@RequestParam(required=true) AdminUser account) {
 		try {
 			List<User> accountsList = new ArrayList<>();
@@ -48,7 +43,6 @@ public class UserController {
 			
 			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 			
-			
 		}
 		catch(Exception ex) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -56,7 +50,95 @@ public class UserController {
 	}
 	
 	
-	@GetMapping("/myaccount")
+	//============================================================= Additional Controls =======================================================================
+	@GetMapping("/catalog")
+	public ResponseEntity<List<Title>> viewCatalog(){
+		try {
+			List<Title> catalog = new ArrayList<>();
+			titleRepository.findAll().forEach(catalog::add);
+			
+			if(!catalog.isEmpty()) {
+				return new ResponseEntity<>(catalog, HttpStatus.OK);
+			}
+				
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	@PutMapping("/putOnHold/{id}")
+	public ResponseEntity<Copy> putOnHold(@RequestParam(required=true) User user, @PathVariable(name="id") int bookId){
+		try {
+			Optional<Copy> bookData = copyRepository.findById(bookId);
+			
+			if(bookData.isPresent()) {
+				Copy book = bookData.get();
+				user.putOnHold(book);
+				
+				copyRepository.save(book);
+				userRepository.save(user);
+				
+				return new ResponseEntity<>(book, HttpStatus.OK);
+			}
+				
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	@PutMapping("/checkIn/{id}")
+	public ResponseEntity<Copy> checkIn(@RequestParam(required=true) User user, @PathVariable(name="id") int bookId){
+		try {
+			Optional<Copy> bookData = copyRepository.findById(bookId);
+			
+			if(bookData.isPresent()) {
+				Copy book = bookData.get();
+				user.checkIn(book);
+				
+				copyRepository.save(book);
+				userRepository.save(user);
+				
+				return new ResponseEntity<>(book, HttpStatus.OK);
+			}
+				
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	@PutMapping("/checkOut/{id}")
+	public ResponseEntity<Copy> checkOut(@RequestParam(required=true) User user, @PathVariable(name="id") int bookId){
+		try {
+			Optional<Copy> bookData = copyRepository.findById(bookId);
+			
+			if(bookData.isPresent()) {
+				Copy book = bookData.get();
+				user.checkOut(book);
+				
+				copyRepository.save(book);
+				userRepository.save(user);
+				
+				return new ResponseEntity<>(book, HttpStatus.OK);
+			}
+				
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	
+	@GetMapping("/myAccount")
 	public ResponseEntity<User> getMyAccount(@RequestParam(required=true) User account) {
 		try {
 			Optional<User> accountData = userRepository.findById(account.getId());
@@ -67,13 +149,13 @@ public class UserController {
 				User u = accountData.get();
 				return new ResponseEntity<>(u, HttpStatus.OK);
 			}
-			else
-				return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+			
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 		}
 		catch(Exception ex) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}
+	}*/
 	
 	
 	@PostMapping("/save")
@@ -87,6 +169,7 @@ public class UserController {
 		}
 	}
 	
+//================================================================ For Testing Purposes ==========================================================================
 	@PostMapping("/save-default")
 	public ResponseEntity<List<User>> createDefaultAccounts(){
 		try {
@@ -107,7 +190,7 @@ public class UserController {
 			
 			List<User> usersList = Arrays.asList(acc1, acc2, acc3);
 			for(User users:usersList)
-				userRepository.save(users);
+				createNewAccount(users);
 			
 			return new ResponseEntity<>(usersList, HttpStatus.OK);
 			

@@ -31,35 +31,98 @@ public class CopyController
 	{
 		try
 		{
-			Copy c = copyRepository.save(copy);
-			return new ResponseEntity<>(c, HttpStatus.OK);
+			if(copy != null) {
+				Copy c = copyRepository.save(copy);
+				return new ResponseEntity<>(c, HttpStatus.OK);
+			}
+			
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
 		catch(Exception ex)
 		{
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	
 	@DeleteMapping("/remove/{copyid}")
 	public void removeCopy(@RequestBody int copyid)
 	{
 		copyRepository.delete(copyRepository.getById(copyid));
 	}
+	
+	
 	@GetMapping("/show")
-	public List<Copy> showAll()
+	public ResponseEntity<List<Copy>> showAll()
 	{
-		return copyRepository.findAll();
-	}
-	@GetMapping("/show/{isbn}")
-	public List<Copy> showByISBN(@PathVariable("isbn") int isbn)
-	{
-		//returns all copies with the corresponding ISBN
-		List<Copy> allCopies = copyRepository.findAll();
-		List<Copy> query = new ArrayList<>();
-		for(Copy c: allCopies)
-		{
-			if(c.getTitle().getISBN() == isbn)
-				query.add(c);
+		try {
+			List<Copy> copies = new ArrayList<>();
+			copyRepository.findAll().forEach(copies::add);
+			
+			if(!copies.isEmpty())
+				return new ResponseEntity<>(copies, HttpStatus.OK);
+			
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+			
 		}
-		return query;
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
+	
+	
+	@GetMapping("/show/{isbn}")
+	public ResponseEntity<List<Copy>> showByISBN(@PathVariable("isbn") int isbn)
+	{
+		try {
+			//returns all copies with the corresponding ISBN
+			List<Copy> allCopies = copyRepository.findAll();
+			List<Copy> query = new ArrayList<>();
+			for(Copy c: allCopies)
+			{
+				if(c.getTitle().getISBN() == isbn)
+					query.add(c);
+			}
+			
+			if(!query.isEmpty())
+				return new ResponseEntity<>(query, HttpStatus.OK);
+			
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+//====================================================================================================================================================================================
+	/*@PostMapping("/save-default")
+	public ResponseEntity<List<Copy>> createDefaultCatalog()
+	{
+		try
+		{
+			Title t1 = new Title("Harry Potter and the Sorcerer's Stone", "J.K. Rowling", Date.valueOf(LocalDate.of(2001, 4, 25)));
+			Title t2 = new Title("Night Hoops","Carl Deuker", Date.valueOf(LocalDate.of(2000, 8, 20)));
+			titleRepository.save(t1);
+			titleRepository.save(t2);
+			
+			Copy c1 = new Copy(t1);
+			Copy c2 = new Copy(t1);
+			Copy c3 = new Copy(t2);
+			copyRepository.save(c1);
+			copyRepository.save(c2);
+			copyRepository.save(c3);
+			
+			List<Copy> books = new ArrayList<>();
+			books.add(c1);
+			books.add(c2);
+			books.add(c3);
+			
+			return new ResponseEntity<>(books, HttpStatus.OK);
+		}
+		catch(Exception ex)
+		{
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}*/
 }
