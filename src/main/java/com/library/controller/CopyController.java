@@ -1,5 +1,7 @@
 package com.library.controller;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.library.entity.Copy;
+import com.library.entity.Title;
 import com.library.repository.CopyRepository;
+import com.library.repository.TitleRepository;
 
 @RestController
 @RequestMapping("copies")
@@ -24,6 +28,10 @@ public class CopyController
 	@Autowired
 	private CopyRepository copyRepository;
 	
+	@Autowired
+	private TitleRepository titleRepository;
+
+
 	//Note: There should be a check, either here or in code calling these methods, 
 	//as to whether the current logged-in user is admin, having privilege to add/remove copies
 	@PostMapping("/save")
@@ -32,6 +40,8 @@ public class CopyController
 		try
 		{
 			if(copy != null) {
+				if(!titleRepository.existsById(copy.getTitle().getISBN()))
+					titleRepository.save(copy.getTitle());
 				Copy c = copyRepository.save(copy);
 				return new ResponseEntity<>(c, HttpStatus.OK);
 			}
@@ -96,22 +106,20 @@ public class CopyController
 	
 	
 //====================================================================================================================================================================================
-	/*@PostMapping("/save-default")
+	@PostMapping("/save-default")
 	public ResponseEntity<List<Copy>> createDefaultCatalog()
 	{
 		try
 		{
 			Title t1 = new Title("Harry Potter and the Sorcerer's Stone", "J.K. Rowling", Date.valueOf(LocalDate.of(2001, 4, 25)));
 			Title t2 = new Title("Night Hoops","Carl Deuker", Date.valueOf(LocalDate.of(2000, 8, 20)));
-			titleRepository.save(t1);
-			titleRepository.save(t2);
 			
 			Copy c1 = new Copy(t1);
 			Copy c2 = new Copy(t1);
 			Copy c3 = new Copy(t2);
-			copyRepository.save(c1);
-			copyRepository.save(c2);
-			copyRepository.save(c3);
+			createNewCopy(c1);
+			createNewCopy(c2);
+			createNewCopy(c3);
 			
 			List<Copy> books = new ArrayList<>();
 			books.add(c1);
@@ -124,5 +132,5 @@ public class CopyController
 		{
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}*/
+	}
 }

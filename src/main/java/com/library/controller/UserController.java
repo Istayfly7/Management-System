@@ -1,18 +1,26 @@
 package com.library.controller;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.library.entity.AdminUser;
+import com.library.entity.Copy;
+import com.library.entity.Title;
 import com.library.entity.User;
 import com.library.entity.VisitorUser;
+import com.library.repository.CopyRepository;
+import com.library.repository.TitleRepository;
 import com.library.repository.UserRepository;
 
 @RestController
@@ -21,6 +29,12 @@ public class UserController {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private CopyRepository copyRepository;
+	
+	@Autowired
+	private TitleRepository titleRepository;
 	
 	//========================================================== Admin ONLY Controls =====================================================================
 	/*@GetMapping("/accounts")
@@ -47,15 +61,16 @@ public class UserController {
 		catch(Exception ex) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}
+	}*/
 	
 	
 	//============================================================= Additional Controls =======================================================================
-	@GetMapping("/catalog")
-	public ResponseEntity<List<Title>> viewCatalog(){
+	
+	/*@GetMapping("/copies")
+	public ResponseEntity<List<Copy>> viewAllCopies(){
 		try {
-			List<Title> catalog = new ArrayList<>();
-			titleRepository.findAll().forEach(catalog::add);
+			List<Copy> catalog = new ArrayList<>();
+			copyRepository.findAll().forEach(catalog::add);
 			
 			if(!catalog.isEmpty()) {
 				return new ResponseEntity<>(catalog, HttpStatus.OK);
@@ -66,10 +81,10 @@ public class UserController {
 		catch(Exception ex) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}
+	}*/
 	
 	
-	@PutMapping("/putOnHold/{id}")
+	/*@PutMapping("/putOnHold/{id}")
 	public ResponseEntity<Copy> putOnHold(@RequestParam(required=true) User user, @PathVariable(name="id") int bookId){
 		try {
 			Optional<Copy> bookData = copyRepository.findById(bookId);
@@ -157,6 +172,38 @@ public class UserController {
 		}
 	}*/
 	
+	@GetMapping("/catalog")
+	public ResponseEntity<List<Title>> viewCatalog(){
+		try {
+			List<Title> catalog = new ArrayList<>();
+			titleRepository.findAll().forEach(catalog::add);
+			
+			if(!catalog.isEmpty()) {
+				return new ResponseEntity<>(catalog, HttpStatus.OK);
+			}
+			
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	@PostMapping("/addBook")
+	public ResponseEntity<Copy> createNewBook(@RequestBody Copy copy)
+	{
+		try {
+			titleRepository.save(copy.getTitle());
+			Copy c = copyRepository.save(copy);
+			return new ResponseEntity<>(c, HttpStatus.OK);
+			
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 	
 	@PostMapping("/save")
 	public ResponseEntity<User> createNewAccount(@RequestBody User user) {
@@ -170,7 +217,7 @@ public class UserController {
 	}
 	
 //================================================================ For Testing Purposes ==========================================================================
-	@PostMapping("/save-default")
+	@PostMapping("/save-defaultAccounts")
 	public ResponseEntity<List<User>> createDefaultAccounts(){
 		try {
 			//Create a Admin by default
@@ -196,6 +243,25 @@ public class UserController {
 			
 		}
 		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	@PostMapping("/save-defaultBook")
+	public ResponseEntity<Copy> createDefaultBook()
+	{
+		try
+		{
+			Title title = new Title("Lord of The Rings", "Whoever", Date.valueOf(LocalDate.of(2000, 3, 25)));
+			
+			Copy book = new Copy(title);
+			
+			return createNewBook(book);
+			
+		}
+		catch(Exception ex)
+		{
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.library.entity.Copy;
 import com.library.entity.Title;
 import com.library.repository.TitleRepository;
 
@@ -23,7 +24,8 @@ public class TitleController
 {
 	@Autowired
 	private TitleRepository titleRepository;
-	
+
+
 	//Note: There should be a check, either here or in code calling these methods, 
 	//as to whether the current logged-in user is admin, having privilege to add/remove titles
 	@PostMapping("/save")
@@ -31,8 +33,17 @@ public class TitleController
 	{
 		try
 		{
-			Title t = titleRepository.save(title);
-			return new ResponseEntity<>(t, HttpStatus.OK);
+			if(title != null) {
+				if(!titleRepository.existsById(title.getISBN())) {
+					Title t = titleRepository.save(title);
+					return new ResponseEntity<>(t, HttpStatus.OK);
+				}
+				else {
+					return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
+				}
+			}
+			
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
 		catch(Exception ex)
 		{
