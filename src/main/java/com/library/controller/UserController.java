@@ -172,6 +172,23 @@ public class UserController {
 		}
 	}*/
 	
+	@GetMapping("/viewAllUsers")
+	public ResponseEntity<List<User>> viewUsers(){
+		try {
+			List<User> users = new ArrayList<>();
+			userRepository.findAll().forEach(users::add);
+			
+			if(!users.isEmpty()) {
+				return new ResponseEntity<>(users, HttpStatus.OK);
+			}
+			
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 	@GetMapping("/catalog")
 	public ResponseEntity<List<Title>> viewCatalog(){
 		try {
@@ -194,10 +211,15 @@ public class UserController {
 	public ResponseEntity<Copy> createNewBook(@RequestBody Copy copy)
 	{
 		try {
-			titleRepository.save(copy.getTitle());
+			if(copy != null) {
+				if(!titleRepository.existsById(copy.getTitle().getISBN()))
+					titleRepository.save(copy.getTitle());
+
 			Copy c = copyRepository.save(copy);
 			return new ResponseEntity<>(c, HttpStatus.OK);
+			}
 			
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 		}
 		catch(Exception ex) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

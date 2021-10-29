@@ -17,7 +17,6 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.library.enumType.UserType;
 
 @Entity
 @Table(name="Users")
@@ -43,12 +42,12 @@ public abstract class User {
 	private Copy bookOnHold;
 	
 	@Column(insertable=false, updatable=false)
-	private UserType type;
+	private String type;
 	
 	@OneToMany(mappedBy="user")
 	private List<Copy> books;
 
-	public abstract UserType getType();
+	public abstract String getType();
 	
 	
 //Additonal Methods
