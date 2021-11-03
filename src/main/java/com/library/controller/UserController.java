@@ -16,11 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.library.entity.AdminUser;
 import com.library.entity.Copy;
-import com.library.entity.Title;
+import com.library.model.Title;
 import com.library.entity.User;
 import com.library.entity.VisitorUser;
 import com.library.repository.CopyRepository;
-import com.library.repository.TitleRepository;
 import com.library.repository.UserRepository;
 
 @RestController
@@ -32,9 +31,6 @@ public class UserController {
 	
 	@Autowired
 	private CopyRepository copyRepository;
-	
-	@Autowired
-	private TitleRepository titleRepository;
 	
 	//========================================================== Admin ONLY Controls =====================================================================
 	/*@GetMapping("/accounts")
@@ -172,11 +168,45 @@ public class UserController {
 		}
 	}*/
 	
-	@GetMapping("/catalog")
-	public ResponseEntity<List<Title>> viewCatalog(){
+	@GetMapping("/viewAllUsers")
+	public ResponseEntity<List<User>> viewUsers(){
 		try {
-			List<Title> catalog = new ArrayList<>();
-			titleRepository.findAll().forEach(catalog::add);
+			List<User> users = new ArrayList<>();
+			userRepository.findAll().forEach(users::add);
+			
+			if(!users.isEmpty()) {
+				return new ResponseEntity<>(users, HttpStatus.OK);
+			}
+			
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/catalogAll")
+	public ResponseEntity<List<Copy>> viewCopies()
+	{
+		try {
+			List<Copy> copies = new ArrayList<>();
+			copyRepository.findAll().forEach(copies::add);
+			
+			if(!copies.isEmpty())
+				return new ResponseEntity<>(copies, HttpStatus.OK);
+			
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+			
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/catalog")
+	public ResponseEntity<List<Title>> viewTitles(){
+		try {
+			List<Title> catalog = Title.getTitles();
 			
 			if(!catalog.isEmpty()) {
 				return new ResponseEntity<>(catalog, HttpStatus.OK);
@@ -194,10 +224,12 @@ public class UserController {
 	public ResponseEntity<Copy> createNewBook(@RequestBody Copy copy)
 	{
 		try {
-			titleRepository.save(copy.getTitle());
-			Copy c = copyRepository.save(copy);
-			return new ResponseEntity<>(c, HttpStatus.OK);
+			if(copy != null) {
+				Copy c = copyRepository.save(copy);
+				return new ResponseEntity<>(c, HttpStatus.OK);
+			}
 			
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 		}
 		catch(Exception ex) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
