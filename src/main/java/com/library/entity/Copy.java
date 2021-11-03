@@ -13,6 +13,8 @@ import javax.persistence.Table;
 
 import org.springframework.data.util.Pair;
 
+import com.library.model.Title;
+
 @Entity
 @Table(name="Copies")
 public class Copy
@@ -21,9 +23,10 @@ public class Copy
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int copyId;
 	//changed int titleId to an entire Title for a many-to-one-relation
-	@ManyToOne
-	@JoinColumn(name="title", nullable=false)
-	private Title title;
+	
+	@JoinColumn(nullable=false)
+	private int title;
+	
 	private boolean inStock = true;
 	private boolean onHold;
 	private Date returnDate;
@@ -49,11 +52,11 @@ public class Copy
 	}
 	
 	public Title getTitle() {
-		return title;
+		return Title.get(title);
 	}
 	
 	public void setTitle(Title t) {
-		this.title = t;
+		this.title = t.getISBN();
 	}
 	
 	public boolean isInStock() {

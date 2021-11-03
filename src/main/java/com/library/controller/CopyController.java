@@ -17,9 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.library.entity.Copy;
-import com.library.entity.Title;
+import com.library.model.Title;
 import com.library.repository.CopyRepository;
-import com.library.repository.TitleRepository;
 
 @RestController
 @RequestMapping("copies")
@@ -27,9 +26,6 @@ public class CopyController
 {
 	@Autowired
 	private CopyRepository copyRepository;
-	
-	@Autowired
-	private TitleRepository titleRepository;
 
 
 	//Note: There should be a check, either here or in code calling these methods, 
@@ -40,8 +36,6 @@ public class CopyController
 		try
 		{
 			if(copy != null) {
-				if(!titleRepository.existsById(copy.getTitle().getISBN()))
-					titleRepository.save(copy.getTitle());
 				Copy c = copyRepository.save(copy);
 				return new ResponseEntity<>(c, HttpStatus.OK);
 			}
@@ -62,7 +56,7 @@ public class CopyController
 	}
 	
 	
-	@GetMapping("/show")
+	@GetMapping("/catalogAll")
 	public ResponseEntity<List<Copy>> showAll()
 	{
 		try {
@@ -74,6 +68,22 @@ public class CopyController
 			
 			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 			
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/catalog")
+	public ResponseEntity<List<Title>> viewCatalog(){
+		try {
+			List<Title> catalog = Title.getTitles();
+			
+			if(!catalog.isEmpty()) {
+				return new ResponseEntity<>(catalog, HttpStatus.OK);
+			}
+			
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 		}
 		catch(Exception ex) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
