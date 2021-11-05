@@ -92,8 +92,8 @@ public class UserController {
 	}*/
 	
 	
-	/*@PutMapping("/checkIn/{id}")
-	public ResponseEntity<Copy> checkIn(@RequestParam(required=true) User user, @PathVariable(name="id") int bookId){
+	@PutMapping("/checkIn/{id}")
+	public ResponseEntity<Copy> checkIn(@RequestBody(required=true) User user, @PathVariable(name="id") int bookId){
 		try {
 			Optional<Copy> bookData = copyRepository.findById(bookId);
 			
@@ -112,7 +112,7 @@ public class UserController {
 		catch(Exception ex) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}*/
+	}
 
 	
 	@PutMapping("/checkOut/{id}")
