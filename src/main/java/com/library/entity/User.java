@@ -53,7 +53,6 @@ public abstract class User {
 //Additonal Methods
 	public boolean checkOut(Copy book) {
 		if(!book.isOnHold() && book.isInStock()) {
-			books.add(book);
 			book.setInStock(false);
 			book.setWhoCheckedOut(this);
 			return true;
@@ -61,11 +60,10 @@ public abstract class User {
 		else if(book.isOnHold() && 
 				(book.getHolder().getFirst() == this.getId() && book.getHolder().getSecond() == this.getUserName())
 				&& book.isInStock()) {
-			books.add(book);
 			book.setInStock(false);
 			book.setWhoCheckedOut(this);
 			book.setOnHold(false);
-			bookOnHold = null;
+			book.setHolder(null);
 			return true;
 		}
 		else {
@@ -73,7 +71,7 @@ public abstract class User {
 		}
 	}
 	
-	public boolean checkIn(Copy book) {
+	/*public boolean checkIn(Copy book) {
 		if(books.remove(book)) {
 			book.setInStock(true);
 			book.setWhoCheckedOut(null);
@@ -91,7 +89,7 @@ public abstract class User {
 		}
 		else
 			return false;
-	}
+	}*/
 	
 	
 //Getters and Setters
