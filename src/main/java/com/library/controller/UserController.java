@@ -5,13 +5,18 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.library.entity.AdminUser;
@@ -60,33 +65,17 @@ public class UserController {
 	}*/
 	
 	
-	//============================================================= Additional Controls =======================================================================
-	
-	/*@GetMapping("/copies")
-	public ResponseEntity<List<Copy>> viewAllCopies(){
-		try {
-			List<Copy> catalog = new ArrayList<>();
-			copyRepository.findAll().forEach(catalog::add);
-			
-			if(!catalog.isEmpty()) {
-				return new ResponseEntity<>(catalog, HttpStatus.OK);
-			}
-				
-			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-		}
-		catch(Exception ex) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}*/
-	
+	//============================================================= Additional Controls =======================================================================	
 	
 	/*@PutMapping("/putOnHold/{id}")
-	public ResponseEntity<Copy> putOnHold(@RequestParam(required=true) User user, @PathVariable(name="id") int bookId){
+	public ResponseEntity<Copy> putOnHold(@RequestBody(required=true) User user, @PathVariable(name="id") int bookId){
 		try {
-			Optional<Copy> bookData = copyRepository.findById(bookId);
+			Optional<Copy> _book = copyRepository.findById(bookId);
 			
-			if(bookData.isPresent()) {
-				Copy book = bookData.get();
+			if(_book.isPresent()) {
+				Copy book = _book.get();
+				
+				//Copy book = new Copy(bookData.getTitle());
 				user.putOnHold(book);
 				
 				copyRepository.save(book);
@@ -100,10 +89,10 @@ public class UserController {
 		catch(Exception ex) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}
+	}*/
 	
 	
-	@PutMapping("/checkIn/{id}")
+	/*@PutMapping("/checkIn/{id}")
 	public ResponseEntity<Copy> checkIn(@RequestParam(required=true) User user, @PathVariable(name="id") int bookId){
 		try {
 			Optional<Copy> bookData = copyRepository.findById(bookId);
@@ -123,11 +112,11 @@ public class UserController {
 		catch(Exception ex) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}
-	
+	}*/
+
 	
 	@PutMapping("/checkOut/{id}")
-	public ResponseEntity<Copy> checkOut(@RequestParam(required=true) User user, @PathVariable(name="id") int bookId){
+	public ResponseEntity<Copy> checkOut(@RequestBody(required=true) User user, @PathVariable(name="id") int bookId){
 		try {
 			Optional<Copy> bookData = copyRepository.findById(bookId);
 			
@@ -149,7 +138,7 @@ public class UserController {
 	}
 
 	
-	@GetMapping("/myAccount")
+	/*@GetMapping("/myAccount")
 	public ResponseEntity<User> getMyAccount(@RequestParam(required=true) User account) {
 		try {
 			Optional<User> accountData = userRepository.findById(account.getId());
@@ -275,25 +264,6 @@ public class UserController {
 			
 		}
 		catch(Exception ex) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-	
-	
-	@PostMapping("/save-defaultBook")
-	public ResponseEntity<Copy> createDefaultBook()
-	{
-		try
-		{
-			Title title = new Title("Lord of The Rings", "Whoever", Date.valueOf(LocalDate.of(2000, 3, 25)));
-			
-			Copy book = new Copy(title);
-			
-			return createNewBook(book);
-			
-		}
-		catch(Exception ex)
-		{
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
