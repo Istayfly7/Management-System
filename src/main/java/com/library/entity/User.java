@@ -1,5 +1,7 @@
 package com.library.entity;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -55,6 +57,11 @@ public abstract class User {
 		if(!book.isOnHold() && book.isInStock()) {
 			book.setInStock(false);
 			book.setWhoCheckedOut(this);
+			
+			LocalDate returnDate = LocalDate.now();
+			returnDate  = returnDate.plusWeeks(2);
+			book.setReturnDate(Date.valueOf(returnDate));
+			
 			return true;
 		}
 		else if(book.isOnHold() && 
@@ -64,6 +71,11 @@ public abstract class User {
 			book.setWhoCheckedOut(this);
 			book.setOnHold(false);
 			book.setHolder(null);
+			
+			LocalDate returnDate = LocalDate.now();
+			returnDate  = returnDate.plusWeeks(2);
+			book.setReturnDate(Date.valueOf(returnDate));
+			
 			return true;
 		}
 		else {
@@ -71,16 +83,18 @@ public abstract class User {
 		}
 	}
 	
-	/*public boolean checkIn(Copy book) {
-		if(books.remove(book)) {
+	public boolean checkIn(Copy book) {
+		if(getBooks().contains(book)) {
 			book.setInStock(true);
 			book.setWhoCheckedOut(null);
+			book.setReturnDate(null);
+			//book.setHolder(null);
 			return true;
 		}
 		return false;	
 	}
 	
-	public boolean putOnHold(Copy book) {
+	/*public boolean putOnHold(Copy book) {
 		if(!book.isOnHold() && !book.isInStock()) {
 			book.setOnHold(true);
 			book.setHolder(this);
