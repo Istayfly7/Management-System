@@ -1,34 +1,39 @@
-import React, { useCallback, useState } from 'react';
-import {createUser} from './services/signupService';
+import React, { useCallback } from 'react';
+import { createUser } from './services/signupService';
 
 function HeaderComponent(){
-  
-  const [signUpData, setSignUpData] = useState([]);
 
-  const sendRequest = useCallback(() => {
+  const signUp = useCallback(() => {
 
     let user = document.getElementById("signupusername").value;
     let pass = document.getElementById("signuppassword").value;
-    //let pass2 = document.getElementById("signuppassword").value;
+    let pass2 = document.getElementById("confirmPassword").value;
 
-    let pobj = createUser(user, pass);
-    /*if(pass === pass2){
-      pobj = createUser(user, pass);
+
+    if(pass === pass2){
+      let pobj = createUser(user, pass);
+
+      pobj.then((response) => {
+        console.log(JSON.stringify(response.data, null, 3));
+      });
+
+      pobj.catch((error) => {
+        console.log(JSON.stringify(error, null, 3))
+      });
+
+      document.getElementById("suSuc").style.display = "block";
+      document.getElementById("suFail").style.display = "none";
     }
     else{
-      console.log("Passwords didn't match");
-    }*/
-    
-    pobj.then((response) => {
-      console.log(JSON.stringify(response.data, null, 3));
-      setSignUpData(response.data.result)
-    });
+      console.error("Passwords didn't match");
 
-    pobj.catch((error) => {
-      console.log(JSON.stringify(error, null, 3))
-    });
+      document.getElementById("suFail").style.display = "block";
+      document.getElementById("suSuc").style.display = "none";
+    }
   
   }, []);
+
+  const signIn = useCallback(() => {}, []);
 
   return (
       <div  className="container-fluid">
@@ -79,9 +84,10 @@ function HeaderComponent(){
                       </form>
                     </div>
                     <div className="modal-footer">
+                      <p id="suSuc" style={{'display': 'none'}}>Sign Up Successful</p>
+                      <p id="suFail" style={{'display': 'none'}}>Passwords do not match!</p>
                       <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                      <button onClick={sendRequest} type="button" className="btn btn-primary">Save</button>
-                      <p hidden>Sign Up Succesful</p>
+                      <button onClick={signUp} type="button" className="btn btn-primary">Save</button>
                     </div>
                   </div>
                 </div>
@@ -108,7 +114,7 @@ function HeaderComponent(){
                     </div>
                     <div className="modal-footer">
                       <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <button type="button" className="btn btn-primary">Log In</button>
+                      <button onClick={signIn} type="button" className="btn btn-primary">Log In</button>
                     </div>
                   </div>
                 </div>
