@@ -94,7 +94,7 @@ public abstract class User {
 		return false;	
 	}
 	
-	/*public boolean putOnHold(Copy book) {
+	public boolean putOnHold(Copy book) {
 		if(!book.isOnHold() && !book.isInStock()) {
 			book.setOnHold(true);
 			book.setHolder(this);
@@ -103,7 +103,7 @@ public abstract class User {
 		}
 		else
 			return false;
-	}*/
+	}
 	
 	
 //Getters and Setters

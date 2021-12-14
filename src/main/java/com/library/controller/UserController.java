@@ -67,13 +67,15 @@ public class UserController {
 	
 	//============================================================= Additional Controls =======================================================================	
 	
-	/*@PutMapping("/putOnHold/{id}")
-	public ResponseEntity<Copy> putOnHold(@RequestBody(required=true) User user, @PathVariable(name="id") int bookId){
+	@PutMapping("/putOnHold/{id}")
+	public ResponseEntity<Copy> putOnHold(@RequestParam(required=true, name="id") int userId, @PathVariable(name="id") int bookId){
 		try {
 			Optional<Copy> _book = copyRepository.findById(bookId);
+			Optional<User> _user = userRepository.findById(userId);
 			
-			if(_book.isPresent()) {
+			if(_book.isPresent() && _user.isPresent()) {
 				Copy book = _book.get();
+				User user = _user.get();
 				
 				//Copy book = new Copy(bookData.getTitle());
 				user.putOnHold(book);
@@ -89,16 +91,19 @@ public class UserController {
 		catch(Exception ex) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}*/
+	}
 	
 	
 	@PutMapping("/checkIn/{id}")
-	public ResponseEntity<Copy> checkIn(@RequestBody(required=true) User user, @PathVariable(name="id") int bookId){
+	public ResponseEntity<Copy> checkIn(@RequestParam(required=true, name="id") int userId, @PathVariable(name="id") int bookId){
 		try {
 			Optional<Copy> bookData = copyRepository.findById(bookId);
+			Optional<User> userData = userRepository.findById(userId);
 			
-			if(bookData.isPresent()) {
+			if(bookData.isPresent() && userData.isPresent()) {
 				Copy book = bookData.get();
+				User user = userData.get();
+				
 				user.checkIn(book);
 				
 				copyRepository.save(book);
