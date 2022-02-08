@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { createUser } from './services/signupService';
+import { createUser } from './headerservices/signupService';
 
 function HeaderComponent(){
 
@@ -40,7 +40,7 @@ function HeaderComponent(){
         <div className="row">
           <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="col-10">
-              <a className="navbar-brand" href="/">Legacy Library</a>
+              <a className="navbar-brand" href="/dashboard">Legacy Library</a>
             </div>
             <div className="col">
               <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

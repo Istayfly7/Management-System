@@ -179,6 +179,35 @@ public class UserController {
 		}
 	}
 	
+	@GetMapping("/viewNumOfUsers")
+	public ResponseEntity<Integer> getNumOfUsers(){
+		try {
+			return new ResponseEntity<>(userRepository.findAll().size(), HttpStatus.OK);
+			
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/viewNumOfAdmin")
+	public ResponseEntity<Integer> getNumOfAdmin(){
+		try {
+			List<User> users = userRepository.findAll();
+			int count = 0;
+			
+			for(User user: users) {
+				if(user.getType() == "ADMIN") count += 1;
+			}
+			
+			return new ResponseEntity<>(count, HttpStatus.OK);
+			
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 	@GetMapping("/catalogAll")
 	public ResponseEntity<List<Copy>> viewCopies()
 	{
