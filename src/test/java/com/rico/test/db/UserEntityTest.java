@@ -12,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.library.entity.*;
-import com.library.enumType.UserType;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -38,13 +37,13 @@ public class UserEntityTest {
 	@Test
 	public void createNewVisitorUserTest() {
 		User vistorUserData = this.entityManager.persist(visitorUser);
-		assertTrue((vistorUserData.getUserName() == "John") && (vistorUserData.getType() == UserType.VISITOR));
+		assertTrue((vistorUserData.getUserName() == "John") && (vistorUserData.getType() == "VISITOR"));
 	}
 	
 	@Test
 	public void createNewAdminUserTest() {
 		User adminUserData = this.entityManager.persist(adminUser);
-		assertTrue((adminUserData.getUserName() == "Administrator") && (adminUserData.getType() == UserType.ADMIN));
+		assertTrue((adminUserData.getUserName() == "Administrator") && (adminUserData.getType() == "ADMIN"));
 	}
 
 }

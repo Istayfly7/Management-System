@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ButtonsComponent from './mainComponents/buttonsComponent';
+import CardComponent from './mainComponents/cardComponent';
 import CarouselComponent from './mainComponents/carouselComponent';
 
 class MainComponent extends Component {
@@ -13,7 +13,7 @@ class MainComponent extends Component {
                 </div>
                 <div className="row">
                     <div className="col">
-                        <ButtonsComponent/>
+                        <CardComponent/>
                     </div>
                 </div>
             </div>

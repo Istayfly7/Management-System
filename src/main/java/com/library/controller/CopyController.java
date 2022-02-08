@@ -1,5 +1,8 @@
 package com.library.controller;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -39,10 +42,14 @@ public class CopyController
 		{
 			if(copy != null) {
 				Copy c = copyRepository.save(copy);
+				
+				//add new copy to the file
+				//if already exist add to the number. if not add entry*********
+				
 				return new ResponseEntity<>(c, HttpStatus.OK);
 			}
 			
-				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
 		catch(Exception ex)
 		{
@@ -75,6 +82,38 @@ public class CopyController
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	
+	@GetMapping("/totalBooks")
+	public ResponseEntity<Integer> getNumofTotalBooks(){
+		try {
+			//copyRepository.findAll().size();
+			return new ResponseEntity<>(copyRepository.findAll().size(), HttpStatus.OK);
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	
+	@GetMapping("/totalAvailable")
+	public ResponseEntity<Integer> getNumofAvailBooks(){
+		try {
+			int count = 0;
+			
+			List<Copy> copies = copyRepository.findAll();
+			
+			for(Copy copy: copies) {
+				if(copy.isInStock()) count += 1;
+			}
+				
+			return new ResponseEntity<>(count, HttpStatus.OK);
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
 	
 	@GetMapping("/catalog")
 	public ResponseEntity<List<Title>> viewCatalog(){
@@ -119,30 +158,43 @@ public class CopyController
 	
 //====================================================================================================================================================================================
 	@PostMapping("/save-default")
-	public ResponseEntity<List<Copy>> createDefaultCatalog()
-	{
+	public void createDefaultCatalog(){
+		//src/main/resources/static/books.txt
+		
 		try
 		{
-			Title t1 = new Title("Harry Potter and the Sorcerer's Stone", "J.K. Rowling", Date.valueOf(LocalDate.of(2001, 4, 25)));
-			Title t2 = new Title("Night Hoops","Carl Deuker", Date.valueOf(LocalDate.of(2000, 8, 20)));
+			File file = new File("src/main/resources/static/books.txt");
 			
-			Copy c1 = new Copy(t1);
-			Copy c2 = new Copy(t1);
-			Copy c3 = new Copy(t2);
-			createNewCopy(c1);
-			createNewCopy(c2);
-			createNewCopy(c3);
+			if(!file.canRead())
+				throw new Exception("Cant read the file " + file.getPath());
 			
-			List<Copy> books = new ArrayList<>();
-			books.add(c1);
-			books.add(c2);
-			books.add(c3);
+			BufferedReader br = new BufferedReader(new FileReader(file));
 			
-			return new ResponseEntity<>(books, HttpStatus.OK);
+			String line;
+			
+			while((line = br.readLine()) != null) {
+				String[] lineArray = line.split(", ");
+				
+				int numOfCopies = Integer.parseInt(lineArray[0]);
+				String title = lineArray[1];
+				String author = lineArray[2];
+				
+				String[] dateArray = lineArray[3].split("-");
+				Date date = Date.valueOf(LocalDate.of(Integer.parseInt(dateArray[2]), Integer.parseInt(dateArray[0]), Integer.parseInt(dateArray[1])));
+				
+				Title t = new Title(title, author, date);
+				
+				for(int i= 0; i < numOfCopies; i++) {
+					Copy c = new Copy(t);
+					copyRepository.save(c);
+				}
+			}
+			
+			br.close();
 		}
 		catch(Exception ex)
 		{
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			System.out.println(ex.fillInStackTrace());
 		}
 	}
 }
