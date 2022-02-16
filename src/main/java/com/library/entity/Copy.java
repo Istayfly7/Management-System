@@ -8,12 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
-import org.springframework.data.util.Pair;
-
-import com.library.model.Title;
 
 @Entity
 @Table(name="Copies")
@@ -24,16 +19,21 @@ public class Copy
 	private int copyId;
 	//changed int titleId to an entire Title for a many-to-one-relation
 	
+	/*@JoinColumn(nullable=false)
+	private int title;*/
+	
 	@JoinColumn(nullable=false)
-	private int title;
+	private String title;
+
+	@JoinColumn(nullable=false)
+	private String author;
+	
+	@JoinColumn(nullable=false)
+	private Date publicationDate;
 	
 	private boolean inStock = true;
-	private boolean onHold;
-	private Date returnDate;
 	
-	@OneToOne
-	@JoinColumn(name="holder")
-	private User holder;
+	private Date returnDate;
 	
 	@ManyToOne
 	@JoinColumn(name="user")
@@ -41,9 +41,11 @@ public class Copy
 	
 	public Copy() {}
 	
-	public Copy(Title t)
+	public Copy(String title, String author, Date date)
 	{
-		this.setTitle(t);
+		this.title = title;
+		this.author = author;
+		this.publicationDate = date;
 	}
 	
 	public int getCopyId()
@@ -51,12 +53,12 @@ public class Copy
 		return this.copyId;
 	}
 	
-	public Title getTitle() {
-		return Title.get(title);
+	public String getTitle() {
+		return this.title;
 	}
 	
-	public void setTitle(Title t) {
-		this.title = t.getISBN();
+	public void setTitle(String title) {
+		this.title = title;
 	}
 	
 	public boolean isInStock() {
@@ -67,17 +69,9 @@ public class Copy
 		this.inStock = inStock;
 	}
 	
-	public boolean isOnHold() {
-		return onHold;
-	}
-	
-	public void setOnHold(boolean onHold) {
-		this.onHold = onHold;
-	}
-	
 	public String getWhoCheckedOut() {
 		if(user != null)
-			return user.getUserName();
+			return user.getUsername();
 		else
 			return "";
 		
@@ -87,17 +81,6 @@ public class Copy
 		user = whoCheckedOut;
 	}
 	
-	public Pair<Integer, String> getHolder() {
-		if(holder != null)
-			return Pair.of(holder.getId(), holder.getUserName());
-		else
-			return Pair.of(0, "");
-	}
-	
-	public void setHolder(User holder) {
-		this.holder = holder;
-	}
-	
 	public Date getReturnDate() {
 		return returnDate;
 	}
@@ -105,4 +88,21 @@ public class Copy
 	public void setReturnDate(Date returnDate) {
 		this.returnDate = returnDate;
 	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	public Date getPublicationDate() {
+		return publicationDate;
+	}
+
+	public void setPublicationDate(Date publicationDate) {
+		this.publicationDate = publicationDate;
+	}
+	
 }

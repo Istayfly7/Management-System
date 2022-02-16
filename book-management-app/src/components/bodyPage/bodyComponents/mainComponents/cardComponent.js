@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getBooksAvail, getBookTotal, getNumOfUsers, getNumOfAdmin } from "../../bodyservices/cardService";
+import { getBooksAvail, getBookTotal, getNumOfUsers } from "../../../services/cardService";
 
 function CardComponent() {
 
@@ -7,7 +7,6 @@ function CardComponent() {
     const[ totalAvail, settotalAvail ] = useState(0);
 
     const[ totalUsers, settotalUsers ] = useState(0);
-    const[ totalAdmin, settotalAdmin ] = useState(0);
 
     getBookTotal().then((response) => {
         settotalBooks(JSON.stringify(response.data, null, 3));
@@ -19,10 +18,6 @@ function CardComponent() {
 
     getNumOfUsers().then((response) => {
         settotalUsers(JSON.stringify(response.data, null, 3));
-    });
-
-    getNumOfAdmin().then((response) => {
-        settotalAdmin(JSON.stringify(response.data, null, 3));
     });
 
     return(
@@ -39,7 +34,7 @@ function CardComponent() {
                 <div className="col">
                     <div className="card text-white bg-info mb-3"  style={{width: "18rem"}}>
                          <div className="card-body">
-                            <h5 className="card-title">Total Available</h5>
+                            <h5 className="card-title">Total Books Available</h5>
                             <p className="card-text">{ totalAvail }</p>
                         </div>
                     </div>
@@ -52,14 +47,6 @@ function CardComponent() {
                         <div className="card-body">
                             <h5 className="card-title">Total Users</h5>
                             <p className="card-text">{ totalUsers }</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="col">
-                    <div className="card text-white bg-secondary mb-3"  style={{width: "18rem"}}>
-                        <div className="card-body">
-                            <h5 className="card-title">Total Admin</h5>
-                            <p className="card-text">{ totalAdmin }</p>
                         </div>
                     </div>
                 </div>
