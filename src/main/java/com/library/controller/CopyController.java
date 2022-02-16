@@ -11,17 +11,17 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.library.entity.Copy;
-import com.library.model.Title;
 import com.library.repository.CopyRepository;
 
 @RestController
@@ -31,56 +31,34 @@ public class CopyController
 {
 	@Autowired
 	private CopyRepository copyRepository;
-
-
-	//Note: There should be a check, either here or in code calling these methods, 
-	//as to whether the current logged-in user is admin, having privilege to add/remove copies
-	@PostMapping("/save")
-	public ResponseEntity<Copy> createNewCopy(@RequestBody Copy copy)
+	
+	
+	@PostMapping("/addBook")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<Copy> createNewBook(@RequestParam String title, @RequestParam String author, @RequestParam String date)
 	{
-		try
-		{
-			if(copy != null) {
-				Copy c = copyRepository.save(copy);
-				
-				//add new copy to the file
-				//if already exist add to the number. if not add entry*********
-				
-				return new ResponseEntity<>(c, HttpStatus.OK);
-			}
-			
-			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-		}
-		catch(Exception ex)
-		{
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-	
-	
-	@DeleteMapping("/remove/{copyid}")
-	public void removeCopy(@RequestBody int copyid)
-	{
-		copyRepository.delete(copyRepository.getById(copyid));
-	}
-	
-	
-	@GetMapping("/catalogAll")
-	public ResponseEntity<List<Copy>> showAll()
-	{
+		//System.out.println("inside create new book");
+		
 		try {
-			List<Copy> copies = new ArrayList<>();
-			copyRepository.findAll().forEach(copies::add);
+			String[] day = date.split("/");
+			Date d = Date.valueOf(LocalDate.of(Integer.parseInt(day[0]), Integer.parseInt(day[1]), Integer.parseInt(day[2])));
 			
-			if(!copies.isEmpty())
-				return new ResponseEntity<>(copies, HttpStatus.OK);
-			
-			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+			Copy copy = new Copy(title, author, d);
+			Copy c = copyRepository.save(copy);
+			return new ResponseEntity<>(c, HttpStatus.OK);
 			
 		}
 		catch(Exception ex) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	
+	@DeleteMapping("/remove/{copyid}")
+	@PreAuthorize("hasRole('ADMIN')")
+	public void removeCopy(@RequestBody int copyid)
+	{
+		copyRepository.delete(copyRepository.getById(copyid));
 	}
 	
 	
@@ -116,15 +94,15 @@ public class CopyController
 	
 	
 	@GetMapping("/catalog")
-	public ResponseEntity<List<Title>> viewCatalog(){
+	public ResponseEntity<List<Copy>> viewCatalog(){
 		try {
-			List<Title> catalog = Title.getTitles();
+			List<Copy> catalog = copyRepository.findAll();
 			
 			if(!catalog.isEmpty()) {
 				return new ResponseEntity<>(catalog, HttpStatus.OK);
 			}
 			
-			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(null, HttpStatus.OK);
 		}
 		catch(Exception ex) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -132,32 +110,58 @@ public class CopyController
 	}
 	
 	
-	@GetMapping("/show/{isbn}")
-	public ResponseEntity<List<Copy>> showByISBN(@PathVariable("isbn") int isbn)
+	@GetMapping("/catalogAvail")
+	public ResponseEntity<List<Copy>> viewAvailable()
 	{
 		try {
-			//returns all copies with the corresponding ISBN
-			List<Copy> allCopies = copyRepository.findAll();
-			List<Copy> query = new ArrayList<>();
-			for(Copy c: allCopies)
-			{
-				if(c.getTitle().getISBN() == isbn)
-					query.add(c);
+			List<Copy> catalog = copyRepository.findAll();
+			List<Copy> available = new ArrayList<>();
+			
+			if(!catalog.isEmpty()) {
+				for(Copy book: catalog) {
+					if(book.isInStock()) {
+						available.add(book);
+					}
+				}
+				
+				if(!available.isEmpty()) return new ResponseEntity<>(available, HttpStatus.OK);
 			}
 			
-			if(!query.isEmpty())
-				return new ResponseEntity<>(query, HttpStatus.OK);
-			
-			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(null, HttpStatus.OK);
 		}
 		catch(Exception ex) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
-	
+	@GetMapping("/checkedOut")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<List<Copy>> viewCheckedOut()
+	{
+		try {
+			List<Copy> catalog = copyRepository.findAll();
+			List<Copy> checkedOut = new ArrayList<>();
+			
+			if(!catalog.isEmpty()) {
+				for(Copy book: catalog) {
+					if(!book.isInStock()) {
+						checkedOut.add(book);
+					}
+				}
+				
+				if(!checkedOut.isEmpty()) return new ResponseEntity<>(checkedOut, HttpStatus.OK);
+			}
+			
+			return new ResponseEntity<>(null, HttpStatus.OK);
+		}
+		catch(Exception ex) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 //====================================================================================================================================================================================
+	
 	@PostMapping("/save-default")
+	@PreAuthorize("hasRole('ADMIN')")
 	public void createDefaultCatalog(){
 		//src/main/resources/static/books.txt
 		
@@ -182,10 +186,11 @@ public class CopyController
 				String[] dateArray = lineArray[3].split("-");
 				Date date = Date.valueOf(LocalDate.of(Integer.parseInt(dateArray[2]), Integer.parseInt(dateArray[0]), Integer.parseInt(dateArray[1])));
 				
-				Title t = new Title(title, author, date);
+				//Title t = new Title(title, author, date);
 				
 				for(int i= 0; i < numOfCopies; i++) {
-					Copy c = new Copy(t);
+					Copy c = new Copy(title, author, date);
+					//createNewBook(c);
 					copyRepository.save(c);
 				}
 			}
