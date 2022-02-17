@@ -40,7 +40,7 @@ public class CopyController
 		//System.out.println("inside create new book");
 		
 		try {
-			String[] day = date.split("/");
+			String[] day = date.split("-");
 			Date d = Date.valueOf(LocalDate.of(Integer.parseInt(day[0]), Integer.parseInt(day[1]), Integer.parseInt(day[2])));
 			
 			Copy copy = new Copy(title, author, d);
