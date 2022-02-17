@@ -75,7 +75,7 @@ class CheckInComponent extends Component{
                             </tr>
                         </thead>
                     </table>
-                    <div style={{'textAlign': 'center'}}>(No books checked out.)</div>
+                    <div style={{'textAlign': 'center'}}>(No books checked out)</div>
                 </div>
             );
         }

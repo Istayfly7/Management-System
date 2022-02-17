@@ -91,15 +91,12 @@ let getCheckedOut = () => {
 
 let addBook = (title, author, date) => {
     try{
-        let pobj = axios.post(rootCopyURL + "addBook", {
-            title: title,
-            author: author,
-            date: date
-        }, {headers: authHeader()});
+        let pobj = axios.post(rootCopyURL
+            + "addBook?title=" + title + "&author=" + author + "&date=" + date, {}, {headers: authHeader()});
         
-        pobj.then((response) => {
+        /*pobj.then((response) => {
             console.log(JSON.stringify(response.data, null, 3));
-        });
+        });*/
 
         return pobj;
     }

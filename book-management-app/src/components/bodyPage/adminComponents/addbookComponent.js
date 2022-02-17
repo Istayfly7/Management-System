@@ -18,7 +18,7 @@ export default class AddBookComponent extends Component {
 
     constructor(props){
         super(props);
-        
+        this.handleAdd = this.handleAdd.bind(this);
         this.onChangeTitle = this.onChangeTitle.bind(this);
         this.onChangeAuthor = this.onChangeAuthor.bind(this);
         this.onChangeDate = this.onChangeDate.bind(this);
@@ -26,7 +26,9 @@ export default class AddBookComponent extends Component {
         this.state = {
             title: "",
             author: "",
-            publicationDate: ""
+            date: "",
+            loading: false,
+            message: "",
         };
     }
 
@@ -44,30 +46,37 @@ export default class AddBookComponent extends Component {
 
     onChangeDate(e) {
         this.setState({
-            publicationDate: e.target.value
+            date: e.target.value
         });
     }
 
     handleAdd(e){
         e.preventDefault();
 
+        this.setState({
+            message: "",
+            loading: true
+        });
+
         this.form.validateAll();
 
         if(this.checkBtn.context._errors.length === 0){
-            addBook(this.state.title, this.state.author, this.state.publicationDate).then(
-                (response) => {
-                    console.log("response: " + response.data);
-                }
-            );
+            addBook(this.state.title, this.state.author, this.state.date);
+            window.location.reload();
+        }
+        else{
+            this.setState({
+                loading: false
+            });
         }
     }
 
     render(){
-        return(
+        return (
             <div  className="col-md-12">
-                <h3 style={{'textAlign': 'center'}} onSubmit={this.handleAdd}>Add Book</h3>
+                <h2 style={{'textAlign': 'center'}}>Add Books</h2>
                 <div className="card card-container">
-                    <Form ref={c => {this.form = c;}}>
+                    <Form onSubmit={this.handleAdd} ref={c => {this.form = c;}}>
                         <div className="form-group">
                             <label htmlFor="title">Title</label>
                             <Input type="text" className="form-control" name="title" value={this.state.title} onChange={this.onChangeTitle} validations={[required]} />
@@ -77,12 +86,21 @@ export default class AddBookComponent extends Component {
                             <Input type="text" className="form-control" name="author" value={this.state.author} onChange={this.onChangeAuthor} validations={[required]} />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="pubdate">Publication Date</label>
-                            <Input type="date" className="form-control" name="pubdate" value={this.state.publicationDate} onChange={this.onChangeDate} validations={[required]} />
+                            <label htmlFor="date">Publication Date</label>
+                            <Input type="date" className="form-control" name="date" value={this.state.date} onChange={this.onChangeDate} validations={[required]} />
                         </div>
                         <div className="form-group">
-                            <button className="btn btn-primary">Add</button>
+                            <button className="btn btn-primary">
+                                {this.state.loading && (<span className="spinner-border spinner-border-sm"></span>)}
+                                <span>Add</span>
+                            </button>
                         </div>
+
+                        {this.state.message && (
+                            <div>
+                                <div className="alert alert-danger" role="alert">{this.state.message}</div>
+                            </div>
+                        )}
                         <CheckButton
                             style={{display: "none"}}
                             ref={c => {
