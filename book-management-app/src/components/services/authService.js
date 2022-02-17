@@ -30,6 +30,14 @@ class AuthService {
         });
     }
 
+    registerAdmin(username, password){
+        return axios.post(rootURL + "signup", {
+            username,
+            password,
+            role: ["user", "admin"]
+        });
+    }
+
     getCurrentUser() {
         return JSON.parse(localStorage.getItem('user'));
     }
