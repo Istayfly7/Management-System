@@ -6,12 +6,12 @@ class MainComponent extends Component {
     render(){
         return(
             <div className="container-fluid">
-                <div className="row">
+                <div style={{paddingTop: "15px"}} className="row">
                     <div className="col">
                         <CarouselComponent/>
                     </div>
                 </div>
-                <div className="row">
+                <div style={{paddingTop: "20px"}} className="row">
                     <div className="col">
                         <CardComponent/>
                     </div>
