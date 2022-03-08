@@ -7,5 +7,5 @@
 * Item status (Days remaining to return)
 
 This Repository holds:
--Server: Spring Boot + Spring Security
--Front End: React Js
+* Server: Spring Boot + Spring Security
+* Front End: React Js
