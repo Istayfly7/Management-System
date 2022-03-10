@@ -41,7 +41,7 @@ import com.library.response.JwtResponse;
 import com.library.response.MessageResponse;
 import com.library.service.MyUserPrincipal;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("users")
 @RestController
 public class UserController {
